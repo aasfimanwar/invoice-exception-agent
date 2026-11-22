@@ -1,0 +1,15 @@
+# Profiles keep memory low (Docker/WSL2 capped at about 3 GB). Nothing starts by default:
+#   docker compose --profile ollama up -d      # only if a phase needs a local model
+# Later phases add profiles here (for example `app` for the approval UI in Phase 5).
+services:
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    mem_limit: 2g
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  ollama-data:
