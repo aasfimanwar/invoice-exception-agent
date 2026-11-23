@@ -27,3 +27,9 @@ Template:
 - Cause: no test sat on that boundary.
 - Fix: added a boundary test at exactly 2,500.00 and 2,500.01 GBP.
 - Commit / run id: commit for the policy engine (feat: domain models and deterministic policy engine).
+
+## 2026-11-23 Smart App Control blocked unsigned programs, twice
+- Symptom: `WinError 4551: An Application Control policy has blocked this file`, first from the gitleaks hook, then from `uv run pre-commit`.
+- Cause: Windows Smart App Control blocks executables it cannot verify. pre-commit compiled gitleaks from source, and pip's `pre-commit.exe` launcher is unsigned. Signed programs such as ruff, mypy, Python and Docker still ran.
+- Fix: the secret scan runs in Docker (`gitleaks-docker`), and pre-commit is run as `uv run python -m pre_commit`, which needs no launcher. `git commit` hooks were never affected. Smart App Control stays on.
+- Commit / run id: 455561a and the commit that follows it.

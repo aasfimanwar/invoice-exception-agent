@@ -189,3 +189,15 @@ Quota snapshot (read from the consoles on 2026-11-22, details in docs/QUOTAS.md)
 **Rejected:** hand-written fixtures (too few, biased toward what I thought of); generating labels from recipes (would not catch engine bugs); one world per case (hides cross-case interference that real data has).
 
 **Consequences:** Labels and gate share the engine (ADR-001), so the 60 hand labels (ADR-013) are the independent check. Synthetic realism is limited: structured fields only (ADR-012), one currency, one VAT rate. Case values are log-uniform from 30 to 10,000 GBP per line; about half of invoices exceed the auto-approve limit.
+
+## ADR-017: Evaluation split, nested subsets and the test-set lock
+
+**Status:** accepted 2026-11-23
+
+**Context:** ADR-002 asks for a stratified 70/30 split with a locked test set. ADR-013 puts hand-labelling before Phase 4, and labelling must not expose test cases.
+
+**Decision:** The split is stratified by primary type and clear-versus-ambiguous (12 strata), with at least 2 test cases per stratum: 197 dev and 83 test. The 60 hand-label cases are drawn from dev only (10 per type, about 1 in 5 ambiguous), and the 30-case dev subset used during development is nested inside them (5 per type), so every day-to-day result can be audited against hand labels. `evalset.select()` returns the test split only when called with `final_report=True` and the environment variable `ALLOW_TEST_SET=final`, and each access is appended to `data/synthetic/test_access.log`, which is committed so any access shows in git history. `split.json` records SHA-256 hashes of the dataset it was built from, and a test fails if the two drift. Thresholds are tuned on dev only (Phase 4).
+
+**Rejected:** a random split (strata can end up empty); hand-labelling test cases (exposes them); a separate private test file (hides drift and breaks reproducibility).
+
+**Consequences:** The lock guards against accidents, not against a determined reader, since the files are in the repo. The test split has 83 cases of which 19 are ambiguous, so confidence intervals on escalation metrics will be wide, and the README says so.

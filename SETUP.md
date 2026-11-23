@@ -16,8 +16,8 @@ Copy-Item .env.example .env
 git config user.name "Your Name"
 git config user.email "ID+username@users.noreply.github.com"
 
-# 4. Hooks (gitleaks, ruff, mypy, policy-doc sync)
-uv run pre-commit install
+# 4. Hooks (gitleaks in Docker, ruff, mypy, policy-doc sync). Docker Desktop must be running.
+uv run python -m pre_commit install
 
 # 5. Checks (all should pass at Phase 0)
 uv run ruff check .
@@ -41,3 +41,16 @@ git push
 
 The first `pre-commit` run downloads hook environments (including Go for gitleaks) and can be
 slow. Run `uv run pre-commit autoupdate` occasionally to refresh hook versions.
+
+## Windows notes
+
+Smart App Control can block unsigned programs with `WinError 4551`. Run pre-commit as
+`uv run python -m pre_commit run --all-files` (not `uv run pre-commit`), and keep Docker Desktop
+running because the gitleaks scan uses a container. Never use `git commit --no-verify`: it skips
+the secret scan.
+
+## Evaluation data
+
+`data/synthetic/` holds the generated dataset and `split.json`. Regenerate with
+`uv run python scripts/generate_dataset.py` then `uv run python scripts/make_split.py`; tests fail if
+the committed files drift. The test split is locked: see ADR-017.
