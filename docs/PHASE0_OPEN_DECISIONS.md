@@ -1,9 +1,18 @@
-# Phase 0: decisions still open
+# Phase 0: decisions
 
-Tick each when decided, then update DECISIONS.md statuses from `proposed` to `accepted`.
+Phase 0 was approved by Aasfi on 2026-11-22, on the condition that everything stays on free tiers
+even if it takes longer (ADR-011).
 
-- [ ] Gemini limits table pasted into docs/QUOTAS.md (models available on the free tier, RPM, RPD).
-- [ ] Groq budget approach: apply the 25% rule to the binding token limit, and run the Groq ablation on a stratified subset or spread over several days. Choice: ______
-- [ ] Policy parameters and rules accepted or changed in policy/policy.yaml (2% / 50 GBP price tolerance, 10% dispute threshold, 2,500 GBP auto-approve limit, raise_dispute for exact duplicates and bank-detail mismatches).
-- [ ] Phase 0 approved (update PHASES.md).
-- [ ] Repo name and GitHub noreply email set (git config user.email).
+- [x] Gemini limits read from AI Studio and recorded in docs/QUOTAS.md.
+- [x] Groq limits read from the organisation Limits page and recorded in docs/QUOTAS.md.
+- [x] Budget rule: per-calendar-day cap of about 50% of the binding limit, runs resume next day (ADR-006).
+- [x] Model plan: LITE Gemini 3.1 Flash Lite; FULL Gemma 4 31B if the probe passes, else Gemini 3.5 Flash Lite plus embedder and reranker (ADR-003).
+- [x] Groq alternate: gpt-oss-120b, single-agent only, stratified 30-case subset (ADR-004).
+- [x] Policy parameters and rules accepted as in policy/policy.yaml v1.0.0.
+- [x] Repo created and noreply email set.
+
+Still to do before Phase 2:
+- [ ] Confirm the GitHub Actions run is green (jobs `checks` and `secrets`).
+- [ ] Put API keys in the local `.env` (never committed).
+- [ ] Run the model capability probe (tool calling, structured JSON, oversized request behaviour).
+- [ ] Confirm the Langfuse Hobby limits in the Langfuse console.

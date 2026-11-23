@@ -69,6 +69,15 @@ def validate_policy(policy: PolicyDict) -> list[str]:
             if not rule["when"] and index != len(rules) - 1:
                 errors.append(f"{exc_type}: unconditional rule {rid} shadows later rules")
 
+    required_tools: dict[str, list[str]] = policy["taxonomy"]["required_read_tools"]
+    read_tools = set(policy["taxonomy"]["tools"]["read"])
+    if set(required_tools) != set(types):
+        errors.append("required_read_tools must cover exactly the exception types")
+    for exc_type, tools in required_tools.items():
+        unknown = set(tools) - read_tools
+        if unknown:
+            errors.append(f"{exc_type}: unknown read tools {sorted(unknown)}")
+
     unused = preds - used - GATE_ONLY_PREDICATES
     if unused:
         errors.append(f"predicates never used by a rule: {sorted(unused)}")

@@ -1,8 +1,10 @@
 repos:
+  # The Go-built gitleaks hook is blocked by an Application Control policy on this Windows
+  # machine (WinError 4551), so the scan runs inside Docker instead (needs Docker Desktop running).
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
-      - id: gitleaks
+      - id: gitleaks-docker
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.6
     hooks:

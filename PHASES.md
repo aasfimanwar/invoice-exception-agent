@@ -5,8 +5,8 @@ open risks. Do not start the next phase before approval.
 
 | # | Phase | Acceptance | Status | Approved on |
 |---|---|---|---|---|
-| 0 | Requirements, taxonomy, policy document, ADRs | approved | drafted, awaiting approval | |
-| 1 | Synthetic data generator, mock APIs, labelled eval set | suite committed | not started | |
+| 0 | Requirements, taxonomy, policy document, ADRs | approved | approved | 2026-11-22 |
+| 1 | Synthetic data generator, mock APIs, labelled eval set | suite committed | in progress: models, policy engine and generator done; mock tools, split and label kit next | |
 | 2 | Single-agent baseline with eval | baseline report | not started | |
 | 3 | Multi-agent graph with checkpointing and tracing | tests pass | not started | |
 | 4 | Confidence scoring and escalation threshold | calibration report | not started | |

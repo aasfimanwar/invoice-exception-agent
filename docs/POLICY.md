@@ -2,7 +2,7 @@
 
 *Entirely synthetic. No real organisation, supplier, person or financial data.*
 
-Policy id `SYN-AP-POLICY`, version 0.1.0, status: draft-phase-0-awaiting-approval.
+Policy id `SYN-AP-POLICY`, version 1.1.0, status: approved-phase-0-2026-11-22.
 
 **Generated from `policy/policy.yaml`. Do not edit by hand.**
 
@@ -52,6 +52,8 @@ Urgency is set by days from the case date to the due date: critical when 2 days 
 - **is_po_exempt_category**: Invoice category is in po_exempt_categories.
 - **supplier_on_watchlist**: Supplier master record carries a watchlist or payment-hold flag.
 - **amount_above_auto_approve_limit**: Gross invoice amount exceeds autonomy.agent_auto_approve_limit_gbp.
+- **supplier_record_unavailable**: The supplier master record for the reference supplier is missing or flagged unreadable, so name, VAT and bank details cannot be verified.
+- **po_record_unavailable**: No readable purchase order exists for the invoice (the reference is missing or the PO is not in the system).
 - **price_diff_within_rounding**: Sum of absolute line differences is at most rounding_tolerance_gbp.
 - **price_within_tolerance**: Every line is within tolerance_pct_of_line AND the invoice total absolute difference is within tolerance_abs_per_invoice_gbp.
 - **price_above_dispute_limit**: Any line exceeds dispute_above_pct and price_change_evidenced is false.
@@ -86,6 +88,8 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| PM-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
+| PM-E2 | po_record_unavailable | escalate (missing_evidence) | The purchase order the invoice refers to cannot be found: a human decides. |
 | PM-1 | price_diff_within_rounding | approve_within_tolerance | A total price difference of 5p or less is treated as rounding and may be approved. |
 | PM-2 | price_within_tolerance | approve_within_tolerance | Price differences within 2% per line and within 50 GBP per invoice may be approved. |
 | PM-3 | price_evidence_conflicting | escalate (conflicting_evidence) | Conflicting price evidence must go to a human approver. |
@@ -97,6 +101,7 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| MP-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
 | MP-1 | is_po_exempt_category | approve_within_tolerance | Utilities, business rates and bank charges do not need a PO. |
 | MP-2 | one_candidate_po | route_to_buyer | One plausible open PO: the buyer confirms the link. Retroactive POs are never created by the agent. |
 | MP-3 | multiple_candidate_pos | escalate (conflicting_evidence) | Several plausible POs must go to a human approver. |
@@ -107,6 +112,7 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| DU-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
 | DU-1 | exact_duplicate | raise_dispute | An exact duplicate is held and rejected with reason. |
 | DU-2 | same_number_different_amount | request_correction | Same invoice number with a different amount: the supplier must issue a credit note and a new invoice. |
 | DU-3 | near_duplicate_different_number | escalate (conflicting_evidence) | A probable resubmission under a new number needs a human decision. |
@@ -117,6 +123,7 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| SD-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
 | SD-1 | bank_details_mismatch | raise_dispute | Any bank detail mismatch is held for human review. The master record is never updated from an invoice. |
 | SD-2 | vat_number_mismatch | request_correction | A VAT number mismatch needs a corrected invoice. |
 | SD-3 | supplier_name_matches_other_master_record | escalate (conflicting_evidence) | A name that matches a different supplier record must go to a human approver. |
@@ -128,6 +135,8 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| QM-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
+| QM-E2 | po_record_unavailable | escalate (missing_evidence) | The purchase order the invoice refers to cannot be found: a human decides. |
 | QM-1 | invoice_qty_le_received | approve_within_tolerance | Billing for no more than was received is approved at the invoiced quantity. |
 | QM-2 | over_billing_within_tolerance | approve_within_tolerance | Over-billing within 2% of received quantity and 50 GBP per invoice may be approved. |
 | QM-3 | over_billing_beyond_tolerance_no_receipt | route_to_buyer | Over-billing with no goods receipt: the buyer confirms what was received. |
@@ -138,6 +147,8 @@ Within each exception type the first matching rule applies. When a case shows se
 
 | Rule | When | Action | Clause |
 |---|---|---|---|
+| PD-E1 | supplier_record_unavailable | escalate (missing_evidence) | The supplier master record is missing or unreadable, so supplier details cannot be verified: a human decides. |
+| PD-E2 | po_record_unavailable | escalate (missing_evidence) | The purchase order the invoice refers to cannot be found: a human decides. |
 | PD-1 | receipt_records_conflict | escalate (conflicting_evidence) | Conflicting goods receipts must go to a human approver. |
 | PD-2 | partial_invoice_matches_received | approve_within_tolerance | An invoice for exactly what has been received is approved. |
 | PD-3 | partial_invoice_for_full_order_within_grace | route_to_buyer | Full-order invoice with a balance still expected: the buyer decides whether to hold. |

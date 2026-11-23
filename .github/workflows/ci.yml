@@ -31,4 +31,4 @@ jobs:
       - name: gitleaks (full history)
         run: |
           python -m pip install pre-commit
-          pre-commit run gitleaks --all-files
+          pre-commit run gitleaks-docker --all-files
